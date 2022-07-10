@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { forwardRef } from 'react';
+import { createTheme, ThemeProvider, LinkProps } from '@mui/material';
+import { BrowserRouter, Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
 
-function App() {
+import AppRoutes from './AppRoutes';
+
+
+const Link = forwardRef<
+  HTMLAnchorElement,
+  Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }>
+  ((props, ref) => {
+    const { href, ...rest } = props;
+    return <RouterLink ref={ref} to={href} {...rest} />;
+})
+
+const theme = createTheme({
+  components: {
+    MuiLink: {
+      defaultProps: {
+        component: Link
+      } as LinkProps
+    },
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: Link,
+      },
+    },
+  }
+});
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <AppRoutes />
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
-
-export default App;
