@@ -3,31 +3,30 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { usePopover } from "../../../generic/hooks";
-import { useDispatch, useSelector } from "../../../hooks";
-import { domainRemoved } from "../sorts.reducer";
+import { sortsSelectors, useDispatch, useSelector } from "store";
+import { usePopover } from "generic/hooks";
+import { sortRemoved } from "model/model.reducer";
 
 import EditSort from "./EditSort";
 
 export default function SortList() {
     const dispatch = useDispatch();
-    const sorts = useSelector(state => state.sorts);
-    const sortsList = Object.entries(sorts);
+    const sorts = useSelector(sortsSelectors.selectAll);
 
     const { popoverProps, openPopover, closePopover } = usePopover();
 
-    const removeDomain = (id: string) => dispatch(domainRemoved({ id }));
+    const removeSort = (id: string) => dispatch(sortRemoved(id));
 
     return (<>
         <List dense>
-            {sortsList.map(([id, sort]) =>
-                <ListItem key={id} secondaryAction={<>
-                    <IconButton size="small" onClick={ev => openPopover(ev.currentTarget, <EditSort onSubmit={closePopover} sortId={id} />)}>
+            {sorts.map(sort =>
+                <ListItem key={sort.id} secondaryAction={<>
+                    <IconButton size="small" onClick={ev => openPopover(ev.currentTarget, <EditSort onSubmit={closePopover} sortId={sort.id} />)}>
                         <EditIcon fontSize="inherit" />
                         </IconButton>
-                    <IconButton size="small" onClick={() => removeDomain(id)}><DeleteIcon fontSize="inherit" /></IconButton>
+                    <IconButton size="small" onClick={() => removeSort(sort.id)}><DeleteIcon fontSize="inherit" /></IconButton>
                 </>}>
-                    <ListItemText primary={id} secondary={`Size: ${sort.size}`}></ListItemText>
+                    <ListItemText primary={sort.id} secondary={`Size: ${sort.size}`}></ListItemText>
                 </ListItem>
             )}
             <ListItem disablePadding>

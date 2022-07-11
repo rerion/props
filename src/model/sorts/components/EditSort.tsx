@@ -1,8 +1,8 @@
 import { Stack, TextField, Button } from "@mui/material";
 
-import { domainSet } from "../sorts.reducer";
-import { useDispatch, useSelector } from "../../../hooks";
-import { useForm } from "../../../generic/hooks";
+import { sortsSelectors, useDispatch, useSelector } from "store";
+import { useForm } from "generic/hooks";
+import { sortAdded } from "model/model.reducer";
 
 type Props = {
     onSubmit?: () => void;
@@ -10,13 +10,11 @@ type Props = {
 }
 
 
-// TODO: modifying is broken, probably have to change reducer too
-// temporarily disabling editing name
+// TODO: modifying not implemented, add reducer
 export default function EditSort(props: Props) {
     const dispatch = useDispatch();
-    const sorts = useSelector(state => state.sorts);
-
-    const ownSort = props.sortId ? sorts[props.sortId] : null;
+    const sorts = useSelector(sortsSelectors.selectEntities);
+    const ownSort = useSelector(state => sortsSelectors.selectById(state, props.sortId || ""));
 
     const form = useForm({
         controls: {
@@ -50,10 +48,7 @@ export default function EditSort(props: Props) {
             if (props.onSubmit) {
                 props.onSubmit();
             }
-            dispatch(domainSet({
-                id: values.id,
-                size: +values.size
-            }));
+            dispatch(sortAdded(values.id, +values.size));
         }
     });
 
