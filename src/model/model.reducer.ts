@@ -20,7 +20,7 @@ export const relationsAdapter = createEntityAdapter<Relation>();
 
 export type Model = {
     sorts: EntityState<Sort>;
-    relations: EntityState<Sort>;
+    relations: EntityState<Relation>;
 }
 
 const initialState = {
@@ -46,6 +46,15 @@ export const modelSlice = createSlice({
         sortRemoved: {
             reducer(state, { payload: id }: PayloadAction<string>) {
                 const relatedRelations = state.sorts.entities[id]!.relations;
+                const removeRelationFromSorts = (relId: string) => {
+                    const rel = state.relations.entities[relId]!;
+                    const uniqueDomains = [...new Set(rel.domain)];
+                    for (const domain of uniqueDomains) {
+                        const sort = state.sorts.entities[domain]!;
+                        sort.relations = sort.relations.filter(r => r !== relId);
+                    }
+                }
+                relatedRelations.forEach(r => removeRelationFromSorts(r));
                 relationsAdapter.removeMany(state.relations, relatedRelations);
                 sortsAdapter.removeOne(state.sorts, id);
                 return state;
@@ -58,11 +67,10 @@ export const modelSlice = createSlice({
             reducer(state, action: PayloadAction<Relation>) {
                 const relation = action.payload;
                 relationsAdapter.addOne(state.relations, relation);
-                for (const domainSort of relation.domain) {
+                const uniqueDomains = [...new Set(relation.domain)];
+                for (const domainSort of uniqueDomains) {
                     const sortRelations = state.sorts.entities[domainSort]!.relations;
-                    if (!sortRelations.find(v => v === relation.id)) {
-                        sortRelations.push(relation.id);
-                    }
+                    sortRelations.push(relation.id);
                 }
                 return state;
             },

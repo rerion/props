@@ -60,6 +60,11 @@ export default function EditSort(props: Props) {
         >
             <TextField
                 {...form.controlProps.id}
+                // autoFocus
+                // TODO: autoFocus doesn't work, 
+                // there is some hook change in MuiModal causing this component to render twice 
+                // probably related to popup animation
+                // https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Modal/Modal.js#L83
                 size="small"
                 label="Sort name"
                 placeholder="Enter name"

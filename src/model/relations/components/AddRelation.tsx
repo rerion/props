@@ -1,5 +1,5 @@
 import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "generic/hooks";
 import { relationsSelectors, sortsSelectors, useDispatch, useSelector } from "store";
 import { relationAdded } from "model/model.reducer";
@@ -12,7 +12,6 @@ type Props = {
 export default function AddRelation(props: Props) {
     const dispatch = useDispatch();
     const sortNames = useSelector(sortsSelectors.selectIds) as string[];
-    useEffect(() => console.log(sortNames));
     const relations = useSelector(relationsSelectors.selectEntities);
 
     const [domain, setDomain] = useState<string[]>([]);
