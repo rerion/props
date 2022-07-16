@@ -22,7 +22,9 @@ export default function AppRoutes() {
             <Route path="/"  element={mainLayout}>
                 {/* <Route index element={<Model />} /> */}
                 <Route path="model" element={<Model />}>
-                    <Route path="relation/:id" element={<RelationGrid />}></Route>
+                    <Route path="relation/:id" element={
+                      <RelationGrid dimensions={[5,7]} checkedMap={{}} />
+                    }></Route>
 
                 </Route>
             </Route>
